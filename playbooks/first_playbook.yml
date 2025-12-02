@@ -5,3 +5,6 @@
   tasks:
    - name : Test Connection
      ping: 
+   - name: Display Message
+     debug:
+       msg: "This is my first Ansible Playbook!"
