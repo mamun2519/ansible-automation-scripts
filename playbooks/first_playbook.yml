@@ -4,4 +4,4 @@
 
   tasks:
    - name : Test Connection
-     ping:
+     ping: 
