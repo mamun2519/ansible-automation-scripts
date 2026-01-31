@@ -2,3 +2,12 @@
   become: true
   vars:
     web_server: nginx
+    tasks:
+      - name: Install web server
+        apt:
+          name: "{{ web_server }}"
+          state: present
+      - name: Ensure web server is started
+        service:
+          name: "{{ web_server }}"
+          state: started
