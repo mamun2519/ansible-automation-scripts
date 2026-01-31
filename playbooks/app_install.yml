@@ -17,3 +17,9 @@
         path: /var/www/html/sample_project
         state: directory
         mode: "0755"
+      # copy file
+    - name: Copy index.html to sample project directory
+      copy:
+        src: files/index.html
+        dest: /var/www/html/sample_project/index.html
+        mode: "0644"
