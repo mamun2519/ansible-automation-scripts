@@ -1,13 +1,17 @@
 ---
 - name: Install and Start The service
   hosts: localhost
- 
+
   tasks:
-   - name: Install nginx
-     apt:
-       name: nginx
-       state: present
-   - name: Start nginx service
-     service:
-       name: nginx
-       state: started
+    - name: Install nginx
+      apt:
+        name: nginx
+        state: present
+    - name: Start nginx service
+      service:
+        name: nginx
+        state: started
+      # file create
+    - name: Create a sample project directory
+      file:
+        path: /var/www/html/sample_project
