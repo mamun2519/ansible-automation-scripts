@@ -15,3 +15,5 @@
     - name: Create a sample project directory
       file:
         path: /var/www/html/sample_project
+        state: directory
+        mode: "0755"
