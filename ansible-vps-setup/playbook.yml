@@ -6,3 +6,4 @@
   roles:
     - user-setup
     - packages
+    - ssh-config
