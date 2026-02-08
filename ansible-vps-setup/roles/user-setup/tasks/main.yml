@@ -18,3 +18,10 @@
     create: yes
     mode: "0440"
     validate: "visudo -cf %s"
+- name: Ensure .ssh directory exists
+  file:
+    path: "/home/{{ admin_username }}/.ssh"
+    state: directory
+    owner: "{{ admin_username }}"
+    group: "{{ admin_username }}"
+    mode: "0700"
