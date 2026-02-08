@@ -33,6 +33,7 @@
   notify: Restart SSH
 
 # Step Two: Generate SSH keys for backend and frontend repositories and add deploy keys to GitHub
+# Generate
 - name: Generate SSH key pair for each project on server
   user:
     name: "{{ admin_username }}"
@@ -41,3 +42,14 @@
     ssh_key_bits: 4096
     ssh_key_comment: "{{ item.name }}_deploy_key"
   loop: "{{ projects }}"
+# set the permissions for the generated keys
+- name: Set correct permissions for generated keys
+  file:
+    path: "/home/{{ admin_username }}/.ssh/{{ item.name }}_deploy_key"
+    owner: "{{ admin_username }}"
+    group: "{{ admin_username }}"
+    mode: "0600"
+  loop: "{{ projects }}"
+
+# Read generated public keys and display them for manual addition to GitHub
+- name: Read generated public keys for each project
