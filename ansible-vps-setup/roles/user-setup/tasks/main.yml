@@ -3,3 +3,10 @@
   group:
     name: "{{  admin_username }}"
     state: present
+- name: Create admin user
+  user:
+    name: "{{ admin_username }}"
+    password: "{{ admin_password | password_hash('sha512') }}"
+    groups: "{{ admin_groups | join(',') }}"
+    append: yes
+    state: present
