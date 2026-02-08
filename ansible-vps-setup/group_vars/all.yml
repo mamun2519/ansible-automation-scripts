@@ -10,3 +10,16 @@ ssh_public_key_path: ~/.ssh/id_rsa.pub
 
 # Node Js Version
 nodejs_version: "20.x"
+
+#Github configuration
+# GitHub Configuration
+github_repo: "https://github.com/yourusername/yourproject.git"
+github_branch: "main"
+project_path: "/home/{{ admin_username }}/project"
+
+# Firewall configuration
+firewall_allowed_ports:
+  - 22
+  - 80
+  - 443
+  - 3000
