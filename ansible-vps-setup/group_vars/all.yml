@@ -1,5 +1,5 @@
 # User configurations for Ansible VPS setup
-admin_user: admin
+admin_username: admin
 admin_password: your_secure_password
 admin_groups:
   - sudo
@@ -15,7 +15,7 @@ projects:
   - name: frontend
     repo: "git@github.com:yourusername/frontend-repo.git"
     branch: "main"
-    path: "/home/{{ admin_username }}/frontend"
+    path: "/home/{{ admin_username}}/frontend"
     deploy_key_path: "~/.ssh/frontend_deploy_key" # Path to the deploy key for the frontend repository
 
   - name: backend

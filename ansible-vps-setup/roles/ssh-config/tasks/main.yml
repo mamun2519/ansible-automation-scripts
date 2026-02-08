@@ -72,7 +72,7 @@
       2. click  "Add deploy key"  button
       3. Title: "{{ projects[loop.index0].name }}_server_deploy"
       4. Key: copy the above public key content
-      5.  Click To the check button ✅ "Allow write access" (if pushing from server is needed, otherwise leave it unchecked)
+      5. Click To the check button ✅ "Allow write access" (if pushing from server is needed, otherwise leave it unchecked)
       6. Click "Add key" to save
 
       {% endfor %}
