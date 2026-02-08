@@ -1,0 +1,32 @@
+---
+- name: Read local SSH public key
+  delegate_to: localhost
+  slurp:
+    src: "{{ ssh_public_key_path }}"
+  register: ssh_public_key_content
+  become: false
+
+- name: Add SSH public key to authorized_keys
+  authorized_key:
+    user: "{{ admin_username }}"
+    state: present
+    key: "{{ ssh_public_key_content['content'] | b64decode }}"
+
+- name: Set authorized_keys permissions
+  file:
+    path: "/home/{{ admin_username }}/.ssh/authorized_keys"
+    owner: "{{ admin_username }}"
+    group: "{{ admin_username }}"
+    mode: "0600"
+
+- name: Configure SSH security
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+  loop:
+    - { regexp: "^#?PermitRootLogin", line: "PermitRootLogin no" }
+    - { regexp: "^#?PasswordAuthentication", line: "PasswordAuthentication no" }
+    - { regexp: "^#?PubkeyAuthentication", line: "PubkeyAuthentication yes" }
+  notify: Restart SSH
