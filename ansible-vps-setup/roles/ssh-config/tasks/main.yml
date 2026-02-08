@@ -69,10 +69,11 @@
 
       ⚠️  এই key টি GitHub এ add করুন:
       1. Repository → Settings → Deploy keys
-      2. "Add deploy key" click করুন
+      2. click  "Add deploy key"  button
       3. Title: "{{ projects[loop.index0].name }}_server_deploy"
-      4. Key: উপরের key copy করুন
-      5. ✅ "Allow write access" check করুন (যদি push করতে চান)
+      4. Key: copy the above public key content
+      5.  Click To the check button ✅ "Allow write access" (if pushing from server is needed, otherwise leave it unchecked)
+      6. Click "Add key" to save
 
       {% endfor %}
       ======================================
