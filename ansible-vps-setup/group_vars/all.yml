@@ -11,11 +11,18 @@ ssh_public_key_path: ~/.ssh/id_rsa.pub
 # Node Js Version
 nodejs_version: "20.x"
 
-#Github configuration
-# GitHub Configuration
-github_repo: "https://github.com/yourusername/yourproject.git"
-github_branch: "main"
-project_path: "/home/{{ admin_username }}/project"
+projects:
+  - name: frontend
+    repo: "git@github.com:yourusername/frontend-repo.git"
+    branch: "main"
+    path: "/home/{{ admin_username }}/frontend"
+    deploy_key_path: "~/.ssh/frontend_deploy_key" # Path to the deploy key for the frontend repository
+
+  - name: backend
+    repo: "git@github.com:yourusername/backend-repo.git"
+    branch: "main"
+    path: "/home/{{ admin_username }}/backend"
+    deploy_key_path: "~/.ssh/backend_deploy_key" # Path to the deploy key for the backend repository
 
 # Firewall configuration
 firewall_allowed_ports:
@@ -23,3 +30,4 @@ firewall_allowed_ports:
   - 80
   - 443
   - 3000
+  - 5000
