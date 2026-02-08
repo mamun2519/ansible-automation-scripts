@@ -1,3 +1,6 @@
 # User configurations for Ansible VPS setup
 admin_user: admin
 admin_password: your_secure_password
+admin_groups:
+  - sudo
+  - docker
