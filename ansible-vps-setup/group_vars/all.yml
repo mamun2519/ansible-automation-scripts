@@ -4,3 +4,9 @@ admin_password: your_secure_password
 admin_groups:
   - sudo
   - docker
+
+# SSH Configuration
+ssh_public_key_path: ~/.ssh/id_rsa.pub
+
+# Node Js Version
+nodejs_version: "20.x"
