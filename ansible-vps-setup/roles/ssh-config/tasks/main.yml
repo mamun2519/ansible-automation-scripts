@@ -53,3 +53,26 @@
 
 # Read generated public keys and display them for manual addition to GitHub
 - name: Read generated public keys for each project
+- name: Display deploy keys for GitHub
+  debug:
+    msg: |
+
+      ======================================
+      🔑 GitHub Deploy Keys
+      ======================================
+
+      {% for key in deploy_public_keys.results %}
+      📌 {{ projects[loop.index0].name | upper }} Deploy Key:
+      Repository: {{ projects[loop.index0].repo }}
+
+      {{ key.content | b64decode }}
+
+      ⚠️  এই key টি GitHub এ add করুন:
+      1. Repository → Settings → Deploy keys
+      2. "Add deploy key" click করুন
+      3. Title: "{{ projects[loop.index0].name }}_server_deploy"
+      4. Key: উপরের key copy করুন
+      5. ✅ "Allow write access" check করুন (যদি push করতে চান)
+
+      {% endfor %}
+      ======================================
