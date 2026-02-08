@@ -1,0 +1,5 @@
+---
+- name: Create admin group
+  group:
+    name: "{{  admin_username }}"
+    state: present
