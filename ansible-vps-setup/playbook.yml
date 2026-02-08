@@ -1,0 +1,8 @@
+---
+- name: VPS Setup Playbook
+  hosts: vps_servers
+  become: true
+  gather_facts: true
+  roles:
+    - user-setup
+    - packages
