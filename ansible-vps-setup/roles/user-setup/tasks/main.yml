@@ -11,3 +11,10 @@
     create_home: yes
     shell: /bin/bash
     state: present
+- name: Add admin to sudoers with NOPASSWD
+  lineinfile:
+    path: /etc/sudoers.d/{{ admin_username }}
+    line: "{{ admin_username }} ALL=(ALL) NOPASSWD:ALL"
+    create: yes
+    mode: "0440"
+    validate: "visudo -cf %s"
