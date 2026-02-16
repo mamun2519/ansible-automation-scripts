@@ -1,15 +1,15 @@
 # User configurations for Ansible VPS setup
 admin_username: admin
-admin_password: your_secure_password
+admin_password: $2a$12$LyBTy8sWjscr
 admin_groups:
   - sudo
-  - docker
+  # - docker
 
 # SSH Configuration
-ssh_public_key_path: ~/.ssh/id_rsa.pub # copy your local SSH public key to this path or update the path accordingly
+ssh_public_key_path: ~/.ssh/personal.pub # copy your local SSH public key to this path or update the path accordingly
 
 # Node Js Version
-nodejs_version: "20.x"
+nodejs_version: "20"
 
 projects:
   - name: frontend

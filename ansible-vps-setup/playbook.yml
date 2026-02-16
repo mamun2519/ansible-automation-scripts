@@ -7,12 +7,11 @@
     - user-setup
     - packages
     - ssh-config
-    - project-deploy
 
   tasks:
     - name: Setup completion message
       debug:
         msg: |
           VPS setup is complete! 
-          You can now access your server using the admin user '{{ admin_user }}' and the provided password.
+          You can now access your server using the admin user '{{ admin_username }}' and the provided password.
           Remember to change the password after your first login for security reasons.

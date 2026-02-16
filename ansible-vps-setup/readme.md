@@ -1,3 +1,3 @@
 Play Book run command
 
-ansible-playbook playbook.yml
+ansible-playbook -i inventory.ini playbook.yml --ask-pass

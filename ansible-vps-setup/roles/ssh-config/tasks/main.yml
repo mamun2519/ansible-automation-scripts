@@ -1,5 +1,92 @@
+# ---
+# # Step one: Configure SSH access for the admin user (admin user can connect using SSH keys only, disable password authentication and root login)
+# - name: Read local SSH public key
+#   delegate_to: localhost
+#   slurp:
+#     src: "{{ ssh_public_key_path }}"
+#   register: ssh_public_key_content
+#   become: false
+
+# - name: Add SSH public key to authorized_keys
+#   authorized_key:
+#     user: "{{ admin_username }}"
+#     state: present
+#     key: "{{ ssh_public_key_content['content'] | b64decode }}"
+
+# - name: Set authorized_keys permissions
+#   file:
+#     path: "/home/{{ admin_username }}/.ssh/authorized_keys"
+#     owner: "{{ admin_username }}"
+#     group: "{{ admin_username }}"
+#     mode: "0600"
+
+# - name: Configure SSH security
+#   lineinfile:
+#     path: /etc/ssh/sshd_config
+#     regexp: "{{ item.regexp }}"
+#     line: "{{ item.line }}"
+#     state: present
+#   loop:
+#     - { regexp: "^#?PermitRootLogin", line: "PermitRootLogin no" }
+#     - { regexp: "^#?PasswordAuthentication", line: "PasswordAuthentication no" }
+#     - { regexp: "^#?PubkeyAuthentication", line: "PubkeyAuthentication yes" }
+#   notify: Restart SSH
+
+# # Step Two: Generate SSH keys for backend and frontend repositories and add deploy keys to GitHub
+# # Generate
+# - name: Read generated public keys from server
+#   slurp:
+#     src: "/home/{{ admin_username }}/.ssh/{{ item.name }}_deploy_key.pub"
+#   register: deploy_public_keys
+#   loop: "{{ projects }}"
+
+# - name: Generate SSH key pair for each project on server
+#   user:
+#     name: "{{ admin_username }}"
+#     generate_ssh_key: yes
+#     ssh_key_file: "/home/{{ admin_username }}/.ssh/{{ item.name }}_deploy_key"
+#     ssh_key_bits: 4096
+#     ssh_key_comment: "{{ item.name }}_deploy_key"
+#   loop: "{{ projects }}"
+
+# # set the permissions for the generated keys
+# - name: Set correct permissions for generated keys
+#   file:
+#     path: "/home/{{ admin_username }}/.ssh/{{ item.name }}_deploy_key"
+#     owner: "{{ admin_username }}"
+#     group: "{{ admin_username }}"
+#     mode: "0600"
+#   loop: "{{ projects }}"
+
+# # Read generated public keys and display them for manual addition to GitHub
+# - name: Read generated public keys for each project
+#   # - name: Display deploy keys for GitHub
+#   debug:
+#     msg: |
+
+#       ======================================
+#       🔑 GitHub Deploy Keys
+#       ======================================
+
+#       {% for key in deploy_public_keys.results %}
+#       📌 {{ projects[loop.index0].name | upper }} Deploy Key:
+#       Repository: {{ projects[loop.index0].repo }}
+
+#       {{ key.content | b64decode }}
+
+#       ⚠️  এই key টি GitHub এ add করুন:
+#       1. Repository → Settings → Deploy keys
+#       2. click  "Add deploy key"  button
+#       3. Title: "{{ projects[loop.index0].name }}_server_deploy"
+#       4. Key: copy the above public key content
+#       5. Click To the check button ✅ "Allow write access" (if pushing from server is needed, otherwise leave it unchecked)
+#       6. Click "Add key" to save
+
+#       {% endfor %}
+#       ======================================
+
 ---
-# Step one: Configure SSH access for the admin user (admin user can connect using SSH keys only, disable password authentication and root login)
+# Step one: Configure SSH access for the admin user
 - name: Read local SSH public key
   delegate_to: localhost
   slurp:
@@ -32,8 +119,7 @@
     - { regexp: "^#?PubkeyAuthentication", line: "PubkeyAuthentication yes" }
   notify: Restart SSH
 
-# Step Two: Generate SSH keys for backend and frontend repositories and add deploy keys to GitHub
-# Generate
+# Step Two: Generate SSH keys for backend and frontend repositories
 - name: Generate SSH key pair for each project on server
   user:
     name: "{{ admin_username }}"
@@ -42,7 +128,7 @@
     ssh_key_bits: 4096
     ssh_key_comment: "{{ item.name }}_deploy_key"
   loop: "{{ projects }}"
-# set the permissions for the generated keys
+
 - name: Set correct permissions for generated keys
   file:
     path: "/home/{{ admin_username }}/.ssh/{{ item.name }}_deploy_key"
@@ -51,16 +137,18 @@
     mode: "0600"
   loop: "{{ projects }}"
 
-# Read generated public keys and display them for manual addition to GitHub
-- name: Read generated public keys for each project
+- name: Read generated public keys from server
+  slurp:
+    src: "/home/{{ admin_username }}/.ssh/{{ item.name }}_deploy_key.pub"
+  register: deploy_public_keys
+  loop: "{{ projects }}"
+
 - name: Display deploy keys for GitHub
   debug:
     msg: |
-
       ======================================
       🔑 GitHub Deploy Keys
       ======================================
-
       {% for key in deploy_public_keys.results %}
       📌 {{ projects[loop.index0].name | upper }} Deploy Key:
       Repository: {{ projects[loop.index0].repo }}
@@ -69,11 +157,25 @@
 
       ⚠️  এই key টি GitHub এ add করুন:
       1. Repository → Settings → Deploy keys
-      2. click  "Add deploy key"  button
+      2. Click "Add deploy key" button
       3. Title: "{{ projects[loop.index0].name }}_server_deploy"
       4. Key: copy the above public key content
-      5. Click To the check button ✅ "Allow write access" (if pushing from server is needed, otherwise leave it unchecked)
+      5. ✅ "Allow write access" check করুন
       6. Click "Add key" to save
-
       {% endfor %}
       ======================================
+
+- name: Create SSH config for GitHub deploy keys
+  template:
+    src: ssh_config.j2
+    dest: "/home/{{ admin_username }}/.ssh/config"
+    owner: "{{ admin_username }}"
+    group: "{{ admin_username }}"
+    mode: "0600"
+
+- name: Add GitHub to known_hosts
+  known_hosts:
+    name: github.com
+    key: "{{ lookup('pipe', 'ssh-keyscan -t rsa github.com') }}"
+    path: "/home/{{ admin_username }}/.ssh/known_hosts"
+    state: present
